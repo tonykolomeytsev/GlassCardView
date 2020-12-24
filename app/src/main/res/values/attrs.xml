@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="GlassCardView">
-        <attr name="cardBackgroundColor" format="color"/>
+        <attr name="glassBackgroundColor" format="color"/>
         <attr name="glassCornerRadius" format="dimension"/>
-        <attr name="cardElevation" format="dimension"/>
-        <attr name="cardMaxElevation" format="dimension"/>
+        <attr name="glassElevation" format="dimension"/>
+        <attr name="glassMaxElevation" format="dimension"/>
         <attr name="glassBlurRadius" format="dimension"/>
+        <attr name="glassOpacity" format="float"/>
         <attr name="contentPadding" format="dimension"/>
         <attr name="contentPaddingLeft" format="dimension"/>
         <attr name="contentPaddingTop" format="dimension"/>

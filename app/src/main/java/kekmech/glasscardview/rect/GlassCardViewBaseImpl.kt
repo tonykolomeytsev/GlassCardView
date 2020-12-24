@@ -16,6 +16,7 @@ class GlassCardViewBaseImpl : GlassCardViewImpl {
         elevation: Float,
         maxElevation: Float,
         blurRadius: Int,
+        opacity: Float,
         blurController: GlassBlurController
     ) {
         val background = RoundRectDrawable(backgroundColor, radius, blurRadius, blurController)
@@ -25,6 +26,7 @@ class GlassCardViewBaseImpl : GlassCardViewImpl {
         view.clipToOutline = true
         view.elevation = elevation
         setMaxElevation(cardView, maxElevation)
+        setOpacity(cardView, opacity)
     }
 
     override fun setRadius(cardView: GlassCardViewDelegate, radius: Float) {
@@ -78,6 +80,14 @@ class GlassCardViewBaseImpl : GlassCardViewImpl {
 
     override fun getBlurRadius(cardView: GlassCardViewDelegate): Int {
         return getCardBackground(cardView).getBlurRadius()
+    }
+
+    override fun setOpacity(cardView: GlassCardViewDelegate, opacity: Float) {
+        getCardBackground(cardView).setOpacity(opacity)
+    }
+
+    override fun getOpacity(cardView: GlassCardViewDelegate): Float {
+        return getCardBackground(cardView).getOpacityInternal()
     }
 
     private fun getCardBackground(cardView: GlassCardViewDelegate): RoundRectDrawable =

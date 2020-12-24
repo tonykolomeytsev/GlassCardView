@@ -70,8 +70,8 @@ class GlassCardView @JvmOverloads constructor(
             attrs, R.styleable.GlassCardView, defStyleAttr, R.style.GlassCardView
         )
         val backgroundColor: ColorStateList?
-        backgroundColor = if (a.hasValue(R.styleable.GlassCardView_cardBackgroundColor)) {
-            a.getColorStateList(R.styleable.GlassCardView_cardBackgroundColor)
+        backgroundColor = if (a.hasValue(R.styleable.GlassCardView_glassBackgroundColor)) {
+            a.getColorStateList(R.styleable.GlassCardView_glassBackgroundColor)
         } else {
             // There isn't one set, so we'll compute one based on the theme
             val aa = getContext().obtainStyledAttributes(intArrayOf(R.attr.colorBackground))
@@ -88,10 +88,11 @@ class GlassCardView @JvmOverloads constructor(
             )
         }
         val radius = a.getDimension(R.styleable.GlassCardView_glassCornerRadius, 0f)
-        val elevation = a.getDimension(R.styleable.GlassCardView_cardElevation, 0f)
-        var maxElevation = a.getDimension(R.styleable.GlassCardView_cardMaxElevation, 0f)
+        val elevation = a.getDimension(R.styleable.GlassCardView_glassElevation, 0f)
+        var maxElevation = a.getDimension(R.styleable.GlassCardView_glassMaxElevation, 0f)
         val defaultPadding = a.getDimensionPixelSize(R.styleable.GlassCardView_contentPadding, 0)
         val blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_glassBlurRadius, 8)
+        val opacity = a.getFloat(R.styleable.GlassCardView_glassOpacity, 0.4f)
         mContentPadding.left = a.getDimensionPixelSize(
             R.styleable.GlassCardView_contentPaddingLeft,
             defaultPadding
@@ -121,6 +122,7 @@ class GlassCardView @JvmOverloads constructor(
             elevation = elevation,
             maxElevation = maxElevation,
             blurRadius = blurRadius,
+            opacity = opacity,
             blurController = blurController
         )
     }

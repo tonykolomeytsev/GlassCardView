@@ -14,6 +14,7 @@ interface GlassCardViewImpl {
         elevation: Float,
         maxElevation: Float,
         blurRadius: Int,
+        opacity: Float,
         blurController: GlassBlurController
     )
 
@@ -42,4 +43,8 @@ interface GlassCardViewImpl {
     fun setBlurRadius(cardView: GlassCardViewDelegate, blurRadius: Int)
 
     fun getBlurRadius(cardView: GlassCardViewDelegate): Int
+
+    fun setOpacity(cardView: GlassCardViewDelegate, opacity: Float)
+
+    fun getOpacity(cardView: GlassCardViewDelegate): Float
 }

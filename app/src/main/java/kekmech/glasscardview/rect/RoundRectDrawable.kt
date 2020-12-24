@@ -18,6 +18,7 @@ class RoundRectDrawable(
     private val mBoundsF: RectF = RectF()
     private val mBoundsI: Rect = Rect()
     private var mPadding: Float = 0f
+    private var mOpacity: Float = 0.4f
 
     private var mBackground: ColorStateList? = null
     private var mTintFilter: PorterDuffColorFilter? = null
@@ -54,8 +55,8 @@ class RoundRectDrawable(
             clearColorFilter = false
         }
 
-        //canvas.drawRoundRect(mBoundsF, mRadius, mRadius, paint)
         blurController.draw(canvas)
+        canvas.drawRoundRect(mBoundsF, mRadius, mRadius, paint)
 
         if (clearColorFilter) {
             paint.colorFilter = null
@@ -150,6 +151,13 @@ class RoundRectDrawable(
     }
 
     fun getBlurRadius(): Int = mBlurRadius
+
+    fun setOpacity(opacity: Float) {
+        mPaint.alpha = (opacity * 255).toInt()
+        mOpacity = opacity
+    }
+
+    fun getOpacityInternal(): Float = mOpacity
 
     private fun RectF.set(left: Int, top: Int, right: Int, bottom: Int) =
         set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
