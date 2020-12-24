@@ -61,7 +61,12 @@ class GlassBlurController(
     private fun updateBlur() {
         if (!isBlurEnabled) return
         bufferBitmap?.eraseColor(Color.TRANSPARENT)
-        bufferCanvas?.let(containerView::draw)
+        with(bufferCanvas!!) {
+            save()
+            setupInternalCanvasMatrix()
+            containerView.draw(this)
+            restore()
+        }
 
         bufferBitmap = bufferBitmap?.let { blurAlgorithm.blur(it, blurRadius) }
         bufferCanvas?.setBitmap(bufferBitmap)
@@ -84,8 +89,14 @@ class GlassBlurController(
         val top: Int = blurViewLocation[1] - containerViewLocation[1]
         val scaledLeftPosition: Float = -left / bufferDownscaleFactor
         val scaledTopPosition: Float = -top / bufferDownscaleFactor
+        println(
+            "top: $top\n" +
+                    "left: $left\n" +
+                    "s_top: $scaledTopPosition\n" +
+                    "s_left: $scaledLeftPosition\n"
+        )
         bufferCanvas?.translate(scaledLeftPosition, scaledTopPosition)
-        bufferCanvas?.scale(1 / bufferDownscaleFactor, 1 / bufferDownscaleFactor)
+        bufferCanvas?.scale(1f / bufferDownscaleFactor, 1f / bufferDownscaleFactor)
     }
 
     override fun draw(canvas: Canvas) {

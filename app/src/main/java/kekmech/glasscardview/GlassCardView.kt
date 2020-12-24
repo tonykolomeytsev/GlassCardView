@@ -24,6 +24,7 @@ class GlassCardView @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val blurController = GlassBlurController(this)
     private val cardViewImpl: GlassCardViewImpl = GlassCardViewBaseImpl()
     private val mContentPadding = Rect()
     val contentPaddingLeft @Px get() = mContentPadding.left
@@ -86,11 +87,11 @@ class GlassCardView @JvmOverloads constructor(
                 )
             )
         }
-        val radius = a.getDimension(R.styleable.GlassCardView_cardCornerRadius, 0f)
+        val radius = a.getDimension(R.styleable.GlassCardView_glassCornerRadius, 0f)
         val elevation = a.getDimension(R.styleable.GlassCardView_cardElevation, 0f)
         var maxElevation = a.getDimension(R.styleable.GlassCardView_cardMaxElevation, 0f)
         val defaultPadding = a.getDimensionPixelSize(R.styleable.GlassCardView_contentPadding, 0)
-        val blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_cardBlurRadius, 8)
+        val blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_glassBlurRadius, 8)
         mContentPadding.left = a.getDimensionPixelSize(
             R.styleable.GlassCardView_contentPaddingLeft,
             defaultPadding
@@ -120,7 +121,7 @@ class GlassCardView @JvmOverloads constructor(
             elevation = elevation,
             maxElevation = maxElevation,
             blurRadius = blurRadius,
-            blurController = GlassBlurController(this)
+            blurController = blurController
         )
     }
 
@@ -136,7 +137,22 @@ class GlassCardView @JvmOverloads constructor(
         return cardViewImpl.getBackgroundColor(mCardViewDelegate)
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        blurController.updateBlurViewSize()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        blurController.isBlurEnabled = false
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        blurController.isBlurEnabled = true
+    }
+
     companion object {
-        const val DOWNSCALE_FACTOR = 8f
+        const val DOWNSCALE_FACTOR = 4f
     }
 }

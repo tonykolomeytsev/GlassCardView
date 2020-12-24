@@ -54,7 +54,7 @@ class RoundRectDrawable(
             clearColorFilter = false
         }
 
-        canvas.drawRoundRect(mBoundsF, mRadius, mRadius, paint)
+        //canvas.drawRoundRect(mBoundsF, mRadius, mRadius, paint)
         blurController.draw(canvas)
 
         if (clearColorFilter) {
