@@ -2,6 +2,7 @@ package kekmech.glasscardview
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -152,6 +153,10 @@ class GlassCardView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         blurController.isBlurEnabled = true
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        if (canva)
     }
 
     companion object {
