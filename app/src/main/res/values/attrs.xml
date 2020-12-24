@@ -3,8 +3,6 @@
     <declare-styleable name="GlassCardView">
         <attr name="glassBackgroundColor" format="color"/>
         <attr name="glassCornerRadius" format="dimension"/>
-        <attr name="glassElevation" format="dimension"/>
-        <attr name="glassMaxElevation" format="dimension"/>
         <attr name="glassBlurRadius" format="dimension"/>
         <attr name="glassOpacity" format="float"/>
         <attr name="contentPadding" format="dimension"/>

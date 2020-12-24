@@ -2,21 +2,16 @@ package kekmech.glasscardview
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Rect
-import android.graphics.drawable.Drawable
+import android.graphics.*
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleRes
 import kekmech.glasscardview.blur.GlassBlurController
-import kekmech.glasscardview.rect.GlassCardViewBaseImpl
-import kekmech.glasscardview.rect.GlassCardViewDelegate
-import kekmech.glasscardview.rect.GlassCardViewImpl
-
+import kotlin.math.round
 
 class GlassCardView @JvmOverloads constructor(
     context: Context,
@@ -26,51 +21,30 @@ class GlassCardView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private val blurController = GlassBlurController(this)
-    private val cardViewImpl: GlassCardViewImpl = GlassCardViewBaseImpl()
+    private val roundRectDrawable = RoundRectDrawable(null, 0f)
     private val mContentPadding = Rect()
     val contentPaddingLeft @Px get() = mContentPadding.left
     val contentPaddingTop @Px get() = mContentPadding.top
     val contentPaddingRight @Px get() = mContentPadding.right
     val contentPaddingBottom @Px get() = mContentPadding.bottom
-    private val mShadowBounds = Rect()
-    private val mCardViewDelegate = object : GlassCardViewDelegate {
 
-        override val cardView get() = this@GlassCardView
-        override var cardBackground: Drawable? = null
-            set(drawable) {
-                field = drawable
-                setBackgroundDrawable(drawable)
-            }
-
-        override fun setShadowPadding(left: Int, top: Int, right: Int, bottom: Int) {
-            mShadowBounds.set(left, top, right, bottom)
-            super@GlassCardView.setPadding(
-                left + mContentPadding.left,
-                top + mContentPadding.top,
-                right + mContentPadding.right,
-                bottom + mContentPadding.bottom
-            )
-        }
-    }
-
-    var radius: Float
-        get() = cardViewImpl.getRadius(mCardViewDelegate)
-        set(value) = cardViewImpl.setRadius(mCardViewDelegate, value)
-    var cardElevation: Float
-        get() = cardViewImpl.getElevation(mCardViewDelegate)
-        set(value) = cardViewImpl.setElevation(mCardViewDelegate, value)
-    var maxCardElevation: Float
-        get() = cardViewImpl.getMaxElevation(mCardViewDelegate)
-        set(value) = cardViewImpl.setMaxElevation(mCardViewDelegate, value)
-    var blurRadius: Int
-        get() = cardViewImpl.getBlurRadius(mCardViewDelegate)
-        set(value) = cardViewImpl.setBlurRadius(mCardViewDelegate, value)
+    var backgroundColor: ColorStateList?
+        get() = roundRectDrawable.backgroundColor
+        set(value) { roundRectDrawable.backgroundColor = value }
+    var cornerRadius: Float
+        get() = roundRectDrawable.cornerRadius
+        set(value) { roundRectDrawable.cornerRadius = value }
+    var opacity: Float
+        get() = roundRectDrawable.alpha
+        set(value) { roundRectDrawable.alpha = value }
+    var cardElevation: Float = 0f
+    var maxElevation: Float = 0f
+    var blurRadius: Int = 0
 
     init {
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.GlassCardView, defStyleAttr, R.style.GlassCardView
         )
-        val backgroundColor: ColorStateList?
         backgroundColor = if (a.hasValue(R.styleable.GlassCardView_glassBackgroundColor)) {
             a.getColorStateList(R.styleable.GlassCardView_glassBackgroundColor)
         } else {
@@ -83,61 +57,24 @@ class GlassCardView @JvmOverloads constructor(
             val hsv = FloatArray(3)
             Color.colorToHSV(themeColorBackground, hsv)
             ColorStateList.valueOf(
-                if (hsv[2] > 0.5f) resources.getColor(R.color.cardview_light_background) else resources.getColor(
-                    R.color.cardview_dark_background
-                )
+                if (hsv[2] > 0.5f) {
+                    resources.getColor(R.color.cardview_light_background)
+                } else {
+                    resources.getColor(R.color.cardview_dark_background)
+                }
             )
         }
-        val radius = a.getDimension(R.styleable.GlassCardView_glassCornerRadius, 0f)
-        val elevation = a.getDimension(R.styleable.GlassCardView_glassElevation, 0f)
-        var maxElevation = a.getDimension(R.styleable.GlassCardView_glassMaxElevation, 0f)
-        val defaultPadding = a.getDimensionPixelSize(R.styleable.GlassCardView_contentPadding, 0)
-        val blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_glassBlurRadius, 8)
-        val opacity = a.getFloat(R.styleable.GlassCardView_glassOpacity, 0.4f)
-        mContentPadding.left = a.getDimensionPixelSize(
-            R.styleable.GlassCardView_contentPaddingLeft,
-            defaultPadding
-        )
-        mContentPadding.top = a.getDimensionPixelSize(
-            R.styleable.GlassCardView_contentPaddingTop,
-            defaultPadding
-        )
-        mContentPadding.right = a.getDimensionPixelSize(
-            R.styleable.GlassCardView_contentPaddingRight,
-            defaultPadding
-        )
-        mContentPadding.bottom = a.getDimensionPixelSize(
-            R.styleable.GlassCardView_contentPaddingBottom,
-            defaultPadding
-        )
-        if (elevation > maxElevation) {
-            maxElevation = elevation
-        }
+        cornerRadius = a.getDimension(R.styleable.GlassCardView_glassCornerRadius, 0f)
+        blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_glassBlurRadius,
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32f, resources.displayMetrics).toInt())
+        opacity = a.getFloat(R.styleable.GlassCardView_glassOpacity, 0.4f)
         a.recycle()
 
-        cardViewImpl.initialize(
-            cardView = mCardViewDelegate,
-            context = context,
-            backgroundColor = backgroundColor!!,
-            radius = radius,
-            elevation = elevation,
-            maxElevation = maxElevation,
-            blurRadius = blurRadius,
-            opacity = opacity,
-            blurController = blurController
-        )
+        background = roundRectDrawable
     }
 
-    fun setCardBackgroundColor(@ColorInt color: Int) {
-        cardViewImpl.setBackgroundColor(mCardViewDelegate, ColorStateList.valueOf(color))
-    }
-
-    fun setCardBackgroundColor(color: ColorStateList?) {
-        cardViewImpl.setBackgroundColor(mCardViewDelegate, color)
-    }
-
-    fun getCardBackgroundColor(): ColorStateList {
-        return cardViewImpl.getBackgroundColor(mCardViewDelegate)
+    override fun setBackgroundColor(@ColorInt color: Int) {
+        backgroundColor = ColorStateList.valueOf(color)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -155,8 +92,15 @@ class GlassCardView @JvmOverloads constructor(
         blurController.isBlurEnabled = true
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        if (canva)
+    override fun draw(canvas: Canvas) {
+        if (!isInEditMode) {
+            val shouldDraw = blurController.draw(canvas)
+            if (shouldDraw) {
+                super.draw(canvas)
+            }
+        } else {
+            super.draw(canvas)
+        }
     }
 
     companion object {

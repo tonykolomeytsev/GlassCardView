@@ -48,12 +48,9 @@
             android:layout_width="200dp"
             android:layout_height="400dp"
             android:layout_gravity="center"
+            android:elevation="4dp"
             app:glassBackgroundColor="#ffffff"
-            app:glassCornerRadius="8dp"
-            app:glassElevation="4dp"
-            app:glassBlurRadius="16dp"
-            app:glassOpacity="0.4"
-            tools:background="#aaffffff">
+            app:glassCornerRadius="32dp">
 
         <TextView
                 android:layout_width="wrap_content"

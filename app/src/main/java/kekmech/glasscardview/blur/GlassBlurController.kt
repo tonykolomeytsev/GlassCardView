@@ -1,9 +1,6 @@
 package kekmech.glasscardview.blur
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
@@ -22,6 +19,7 @@ class GlassBlurController(
     private var bufferDownscaleFactor: Float = 1f
     private val containerViewLocation = IntArray(2) { 0 }
     private val blurViewLocation = IntArray(2) { 0 }
+    private var tintPath: Path = Path()
 
     /**
      * LISTENING
@@ -54,8 +52,19 @@ class GlassBlurController(
         }
         blurView.setWillNotDraw(false)
         allocateBitmap()
+        updateTintPath()
         bufferCanvas = Canvas(bufferBitmap!!)
         setupInternalCanvasMatrix()
+    }
+
+    private fun updateTintPath() {
+        tintPath = Path()
+        tintPath.addRoundRect(
+            RectF(0f, 0f, blurView.measuredWidth.toFloat(), blurView.measuredHeight.toFloat()),
+            blurView.cornerRadius,
+            blurView.cornerRadius,
+            Path.Direction.CW
+        )
     }
 
     private fun updateBlur() {
@@ -89,23 +98,24 @@ class GlassBlurController(
         val top: Int = blurViewLocation[1] - containerViewLocation[1]
         val scaledLeftPosition: Float = -left / bufferDownscaleFactor
         val scaledTopPosition: Float = -top / bufferDownscaleFactor
-        println(
-            "top: $top\n" +
-                    "left: $left\n" +
-                    "s_top: $scaledTopPosition\n" +
-                    "s_left: $scaledLeftPosition\n"
-        )
+
         bufferCanvas?.translate(scaledLeftPosition, scaledTopPosition)
         bufferCanvas?.scale(1f / bufferDownscaleFactor, 1f / bufferDownscaleFactor)
     }
 
-    override fun draw(canvas: Canvas) {
-        if (!isBlurEnabled || canvas == bufferCanvas) return
+    override fun draw(canvas: Canvas): Boolean {
+        if (!isBlurEnabled) return true
+        if (canvas == bufferCanvas) return false
+
         updateBlur()
         canvas.save()
+        canvas.clipPath(tintPath)
         canvas.scale(bufferDownscaleFactor, bufferDownscaleFactor)
         bufferBitmap?.let { canvas.drawBitmap(it, 0f, 0f, bufferPaint) }
+        bufferPaint.xfermode = null
         canvas.restore()
+
+        return true
     }
 
     override fun updateBlurViewSize() = initialize()

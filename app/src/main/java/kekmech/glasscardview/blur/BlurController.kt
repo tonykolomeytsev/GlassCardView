@@ -8,7 +8,7 @@ interface BlurController {
      *
      * @return true if BlurView should proceed with drawing itself and its children
      */
-    fun draw(canvas: Canvas)
+    fun draw(canvas: Canvas): Boolean
 
     /**
      * Must be used to notify Controller when BlurView's size has changed
