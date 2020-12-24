@@ -6,13 +6,11 @@ import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
 
 class GlassBlurController(
-    private val blurView: GlassCardView
+    private val blurView: GlassCardView,
+    isInEditMode: Boolean
 ) : BlurController {
 
-    /**
-     * DRAWING
-     */
-    private val blurAlgorithm = GlassBlurAlgorithm(blurView.context)
+    private val blurAlgorithm: GlassBlurAlgorithm? = if (isInEditMode) null else GlassBlurAlgorithm(blurView.context)
     private var bufferBitmap: Bitmap? = null
     private var bufferCanvas: Canvas? = null
     private var bufferPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
@@ -21,9 +19,6 @@ class GlassBlurController(
     private val blurViewLocation = IntArray(2) { 0 }
     private var tintPath: Path = Path()
 
-    /**
-     * LISTENING
-     */
     private val blurRadius get() = (blurView.blurRadius / GlassCardView.DOWNSCALE_FACTOR).toInt()
     private val containerView: ViewGroup get() = blurView.parent as ViewGroup
     private val preDrawListener = ViewTreeObserver.OnPreDrawListener {
@@ -31,9 +26,6 @@ class GlassBlurController(
         true
     }
 
-    /**
-     * FIELDS
-     */
     var isBlurEnabled: Boolean = false
         set(value) {
             blurView.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
@@ -77,7 +69,7 @@ class GlassBlurController(
             restore()
         }
 
-        bufferBitmap = bufferBitmap?.let { blurAlgorithm.blur(it, blurRadius) }
+        bufferBitmap = bufferBitmap?.let { blurAlgorithm?.blur(it, blurRadius) }
         bufferCanvas?.setBitmap(bufferBitmap)
     }
 
@@ -122,6 +114,6 @@ class GlassBlurController(
 
     override fun destroy() {
         isBlurEnabled = false
-        blurAlgorithm.destroy()
+        blurAlgorithm?.destroy()
     }
 }

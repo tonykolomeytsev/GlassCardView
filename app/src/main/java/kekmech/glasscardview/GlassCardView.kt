@@ -11,7 +11,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleRes
 import kekmech.glasscardview.blur.GlassBlurController
-import kotlin.math.round
 
 class GlassCardView @JvmOverloads constructor(
     context: Context,
@@ -20,7 +19,7 @@ class GlassCardView @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val blurController = GlassBlurController(this)
+    private val blurController = GlassBlurController(this, isInEditMode)
     private val roundRectDrawable = RoundRectDrawable(null, 0f)
     private val mContentPadding = Rect()
     val contentPaddingLeft @Px get() = mContentPadding.left
@@ -37,8 +36,6 @@ class GlassCardView @JvmOverloads constructor(
     var opacity: Float
         get() = roundRectDrawable.alpha
         set(value) { roundRectDrawable.alpha = value }
-    var cardElevation: Float = 0f
-    var maxElevation: Float = 0f
     var blurRadius: Int = 0
 
     init {
@@ -67,7 +64,7 @@ class GlassCardView @JvmOverloads constructor(
         cornerRadius = a.getDimension(R.styleable.GlassCardView_glassCornerRadius, 0f)
         blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_glassBlurRadius,
             TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32f, resources.displayMetrics).toInt())
-        opacity = a.getFloat(R.styleable.GlassCardView_glassOpacity, 0.4f)
+        opacity = a.getFloat(R.styleable.GlassCardView_glassOpacity, 0.6f)
         a.recycle()
 
         background = roundRectDrawable
@@ -93,17 +90,13 @@ class GlassCardView @JvmOverloads constructor(
     }
 
     override fun draw(canvas: Canvas) {
-        if (!isInEditMode) {
-            val shouldDraw = blurController.draw(canvas)
-            if (shouldDraw) {
-                super.draw(canvas)
-            }
-        } else {
+        val shouldDraw = blurController.draw(canvas)
+        if (shouldDraw) {
             super.draw(canvas)
         }
     }
 
     companion object {
-        const val DOWNSCALE_FACTOR = 4f
+        const val DOWNSCALE_FACTOR = 8f
     }
 }
