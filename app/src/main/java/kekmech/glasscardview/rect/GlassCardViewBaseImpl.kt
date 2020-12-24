@@ -1,8 +1,9 @@
-package kekmech.glasscardview
+package kekmech.glasscardview.rect
 
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.View
+import kekmech.glasscardview.blur.GlassBlurController
 
 
 class GlassCardViewBaseImpl : GlassCardViewImpl {
@@ -13,9 +14,11 @@ class GlassCardViewBaseImpl : GlassCardViewImpl {
         backgroundColor: ColorStateList,
         radius: Float,
         elevation: Float,
-        maxElevation: Float
+        maxElevation: Float,
+        blurRadius: Int,
+        blurController: GlassBlurController
     ) {
-        val background = RoundRectDrawable(backgroundColor, radius)
+        val background = RoundRectDrawable(backgroundColor, radius, blurRadius, blurController)
         cardView.cardBackground = background
 
         val view: View = cardView.cardView
@@ -67,6 +70,14 @@ class GlassCardViewBaseImpl : GlassCardViewImpl {
 
     override fun getBackgroundColor(cardView: GlassCardViewDelegate): ColorStateList {
         return getCardBackground(cardView).getColor()!!
+    }
+
+    override fun setBlurRadius(cardView: GlassCardViewDelegate, blurRadius: Int) {
+        getCardBackground(cardView).setBlurRadius(blurRadius)
+    }
+
+    override fun getBlurRadius(cardView: GlassCardViewDelegate): Int {
+        return getCardBackground(cardView).getBlurRadius()
     }
 
     private fun getCardBackground(cardView: GlassCardViewDelegate): RoundRectDrawable =

@@ -11,6 +11,10 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleRes
+import kekmech.glasscardview.blur.GlassBlurController
+import kekmech.glasscardview.rect.GlassCardViewBaseImpl
+import kekmech.glasscardview.rect.GlassCardViewDelegate
+import kekmech.glasscardview.rect.GlassCardViewImpl
 
 
 class GlassCardView @JvmOverloads constructor(
@@ -20,7 +24,7 @@ class GlassCardView @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private var cardViewImpl: GlassCardViewImpl = GlassCardViewBaseImpl()
+    private val cardViewImpl: GlassCardViewImpl = GlassCardViewBaseImpl()
     private val mContentPadding = Rect()
     val contentPaddingLeft @Px get() = mContentPadding.left
     val contentPaddingTop @Px get() = mContentPadding.top
@@ -56,6 +60,9 @@ class GlassCardView @JvmOverloads constructor(
     var maxCardElevation: Float
         get() = cardViewImpl.getMaxElevation(mCardViewDelegate)
         set(value) = cardViewImpl.setMaxElevation(mCardViewDelegate, value)
+    var blurRadius: Int
+        get() = cardViewImpl.getBlurRadius(mCardViewDelegate)
+        set(value) = cardViewImpl.setBlurRadius(mCardViewDelegate, value)
 
     init {
         val a = context.obtainStyledAttributes(
@@ -83,6 +90,7 @@ class GlassCardView @JvmOverloads constructor(
         val elevation = a.getDimension(R.styleable.GlassCardView_cardElevation, 0f)
         var maxElevation = a.getDimension(R.styleable.GlassCardView_cardMaxElevation, 0f)
         val defaultPadding = a.getDimensionPixelSize(R.styleable.GlassCardView_contentPadding, 0)
+        val blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_cardBlurRadius, 8)
         mContentPadding.left = a.getDimensionPixelSize(
             R.styleable.GlassCardView_contentPaddingLeft,
             defaultPadding
@@ -110,7 +118,9 @@ class GlassCardView @JvmOverloads constructor(
             backgroundColor = backgroundColor!!,
             radius = radius,
             elevation = elevation,
-            maxElevation = maxElevation
+            maxElevation = maxElevation,
+            blurRadius = blurRadius,
+            blurController = GlassBlurController(this)
         )
     }
 
@@ -124,5 +134,9 @@ class GlassCardView @JvmOverloads constructor(
 
     fun getCardBackgroundColor(): ColorStateList {
         return cardViewImpl.getBackgroundColor(mCardViewDelegate)
+    }
+
+    companion object {
+        const val DOWNSCALE_FACTOR = 8f
     }
 }

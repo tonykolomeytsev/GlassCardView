@@ -1,4 +1,4 @@
-package kekmech.glasscardview
+package kekmech.glasscardview.rect
 
 import android.graphics.drawable.Drawable
 import android.view.View

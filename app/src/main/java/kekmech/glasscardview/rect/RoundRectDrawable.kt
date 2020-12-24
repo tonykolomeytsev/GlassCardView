@@ -1,13 +1,19 @@
-package kekmech.glasscardview
+package kekmech.glasscardview.rect
 
 import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import kekmech.glasscardview.blur.GlassBlurController
 
-
-class RoundRectDrawable(backgroundColor: ColorStateList?, radius: Float) : Drawable() {
+class RoundRectDrawable(
+    backgroundColor: ColorStateList?,
+    radius: Float,
+    blurRadius: Int,
+    private val blurController: GlassBlurController
+) : Drawable() {
 
     private var mRadius: Float = radius
+    private var mBlurRadius: Int = blurRadius
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
     private val mBoundsF: RectF = RectF()
     private val mBoundsI: Rect = Rect()
@@ -49,6 +55,7 @@ class RoundRectDrawable(backgroundColor: ColorStateList?, radius: Float) : Drawa
         }
 
         canvas.drawRoundRect(mBoundsF, mRadius, mRadius, paint)
+        blurController.draw(canvas)
 
         if (clearColorFilter) {
             paint.colorFilter = null
@@ -137,6 +144,12 @@ class RoundRectDrawable(backgroundColor: ColorStateList?, radius: Float) : Drawa
     override fun isStateful() =
         (mTint != null && mTint!!.isStateful ||
                 mBackground != null && mBackground!!.isStateful || super.isStateful())
+
+    fun setBlurRadius(blurRadius: Int) {
+        mBlurRadius = blurRadius
+    }
+
+    fun getBlurRadius(): Int = mBlurRadius
 
     private fun RectF.set(left: Int, top: Int, right: Int, bottom: Int) =
         set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
