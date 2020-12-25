@@ -3,11 +3,12 @@ package kekmech.glasscardview
 import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import com.google.android.material.shape.MaterialShapeDrawable
 
 class RoundRectDrawable(
     _backgroundColor: ColorStateList?,
     _cornerRadius: Float
-) : Drawable() {
+) : MaterialShapeDrawable() {
 
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
     private val boundsF: RectF = RectF()
