@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -9,7 +8,37 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:weightSum="5">
+            android:weightSum="10">
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#FF5D5D" />
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#8BC34A" />
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#FFC107" />
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#03A9F4" />
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#673AB7" />
 
         <View
                 android:layout_width="match_parent"
@@ -45,22 +74,70 @@
 
     <kekmech.glasscardview.GlassCardView
             android:id="@+id/gcv"
-            android:layout_width="200dp"
-            android:layout_height="400dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:elevation="4dp"
             app:glassBackgroundColor="#ffffff"
-            app:glassCornerRadius="32dp">
+            app:glassCornerRadius="8dp"
+            android:elevation="4dp">
 
-        <TextView
-                android:layout_width="wrap_content"
+        <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Hello world!"
-                android:textColor="#000"
-                android:textSize="30sp"
-                android:fontFamily="sans-serif-black"/>
+                android:padding="16dp"
+                android:orientation="vertical">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GLASS"
+                    android:textColor="#fff"
+                    android:shadowColor="#88000000"
+                    android:shadowRadius="16"
+                    android:textSize="30sp"
+                    android:fontFamily="sans-serif-black"
+                    android:paddingHorizontal="16dp"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MORPHISM"
+                    android:textColor="#fff"
+                    android:shadowColor="#88000000"
+                    android:shadowRadius="16"
+                    android:textSize="30sp"
+                    android:fontFamily="sans-serif-black"
+                    android:paddingHorizontal="16dp"/>
+
+        </LinearLayout>
 
     </kekmech.glasscardview.GlassCardView>
+
+    <kekmech.glasscardview.GlassCardView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:glassCornerRadius="4dp"
+            app:glassBackgroundColor="#fff"
+            android:layout_margin="16dp"
+            android:elevation="2dp"/>
+
+    <kekmech.glasscardview.GlassCardView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="16dp"
+            android:layout_gravity="bottom|end"
+            android:elevation="2dp"
+            app:glassBackgroundColor="#ffffff"
+            app:glassBlurRadius="32dp"
+            app:glassOpacity="0.6"/>
+
+    <androidx.cardview.widget.CardView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="132dp"
+            app:cardBackgroundColor="#ffffff"
+            app:cardCornerRadius="4dp"/>
 
 </FrameLayout>

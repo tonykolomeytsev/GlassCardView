@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
             .start()
 
     }
-
     private fun animate2() {
         findViewById<GlassCardView>(R.id.gcv).animate()
             .setStartDelay(500L)

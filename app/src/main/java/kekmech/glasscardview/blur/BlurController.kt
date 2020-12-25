@@ -19,8 +19,4 @@ interface BlurController {
      * Frees allocated resources
      */
     fun destroy()
-
-    companion object {
-        const val DEFAULT_SCALE_FACTOR = 8f
-    }
 }

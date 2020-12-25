@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
@@ -61,9 +62,8 @@ class GlassCardView @JvmOverloads constructor(
                 }
             )
         }
-        cornerRadius = a.getDimension(R.styleable.GlassCardView_glassCornerRadius, 0f)
-        blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_glassBlurRadius,
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32f, resources.displayMetrics).toInt())
+        cornerRadius = a.getDimension(R.styleable.GlassCardView_glassCornerRadius, DEFAULT_CORNER_RADIUS.dp.toFloat())
+        blurRadius = a.getDimensionPixelSize(R.styleable.GlassCardView_glassBlurRadius, DEFAULT_BLUR_RADIUS.dp)
         opacity = a.getFloat(R.styleable.GlassCardView_glassOpacity, 0.6f)
         a.recycle()
 
@@ -96,7 +96,14 @@ class GlassCardView @JvmOverloads constructor(
         }
     }
 
+    private val Number.dp get() = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, toFloat(), resources.displayMetrics
+    ).toInt()
+
     companion object {
         const val DOWNSCALE_FACTOR = 8f
+
+        const val DEFAULT_BLUR_RADIUS = 32f
+        const val DEFAULT_CORNER_RADIUS = 4f
     }
 }

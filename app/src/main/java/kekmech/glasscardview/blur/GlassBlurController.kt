@@ -1,9 +1,13 @@
 package kekmech.glasscardview.blur
 
 import android.graphics.*
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
+import kotlin.math.ceil
+
+private const val ROUNDING_VALUE = 64
 
 class GlassBlurController(
     private val blurView: GlassCardView,
@@ -27,13 +31,9 @@ class GlassBlurController(
     }
 
     var isBlurEnabled: Boolean = false
-        set(value) {
-            blurView.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
-            if (value) blurView.viewTreeObserver.addOnPreDrawListener(preDrawListener)
-            field = value
-        }
 
     init {
+        blurView.viewTreeObserver.addOnPreDrawListener(preDrawListener)
         initialize()
     }
 
@@ -45,8 +45,7 @@ class GlassBlurController(
         blurView.setWillNotDraw(false)
         allocateBitmap()
         updateTintPath()
-        bufferCanvas = Canvas(bufferBitmap!!)
-        setupInternalCanvasMatrix()
+        updateBufferCanvasMatrix()
     }
 
     private fun updateTintPath() {
@@ -64,7 +63,7 @@ class GlassBlurController(
         bufferBitmap?.eraseColor(Color.TRANSPARENT)
         with(bufferCanvas!!) {
             save()
-            setupInternalCanvasMatrix()
+            updateBufferCanvasMatrix()
             containerView.draw(this)
             restore()
         }
@@ -81,9 +80,10 @@ class GlassBlurController(
             downscaledHeight,
             Bitmap.Config.ARGB_8888
         )
+        bufferCanvas = Canvas(bufferBitmap!!)
     }
 
-    private fun setupInternalCanvasMatrix() {
+    private fun updateBufferCanvasMatrix() {
         containerView.getLocationOnScreen(containerViewLocation)
         blurView.getLocationOnScreen(blurViewLocation)
         val left: Int = blurViewLocation[0] - containerViewLocation[0]
@@ -116,4 +116,21 @@ class GlassBlurController(
         isBlurEnabled = false
         blurAlgorithm?.destroy()
     }
+
+    private fun View.measureDownscaledValues(): Triple<Int, Int, Float> {
+        // downscale width to
+        val scaledWidth: Int = measuredWidth.downscaleSize().roundTo(ROUNDING_VALUE)
+        val roundingScaleFactor = measuredWidth.toFloat() / scaledWidth
+        val scaledHeight = ceil((measuredHeight / roundingScaleFactor).toDouble()).toInt()
+        return Triple(scaledWidth, scaledHeight, roundingScaleFactor)
+    }
+
+    private fun View.isZeroMeasured(): Boolean =
+        measuredHeight.downscaleSize() == 0 || measuredWidth.downscaleSize() == 0
+
+    private fun Int.downscaleSize(): Int =
+        ceil(this / GlassCardView.DOWNSCALE_FACTOR).toInt()
+
+    private fun Int.roundTo(value: Int): Int =
+        if (this % value == 0) this else this - this % value + value
 }
