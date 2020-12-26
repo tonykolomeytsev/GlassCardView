@@ -9,7 +9,7 @@ import kotlin.math.ceil
 
 private const val ROUNDING_VALUE = 64
 
-class GlassBlurController(
+internal class GlassBlurController(
     private val blurView: GlassCardView,
     isInEditMode: Boolean
 ) : BlurController {

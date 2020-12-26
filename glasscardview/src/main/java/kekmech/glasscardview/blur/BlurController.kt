@@ -2,7 +2,7 @@ package kekmech.glasscardview.blur
 
 import android.graphics.Canvas
 
-interface BlurController {
+internal interface BlurController {
     /**
      * Draws blurred content on given canvas
      *
