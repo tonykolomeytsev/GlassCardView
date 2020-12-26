@@ -5,21 +5,25 @@ import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.*
 import android.util.AttributeSet
+import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.annotation.*
 import kekmech.glasscardview.blur.GlassBlurController
-import kekmech.glasscardview.registry.GlobalBitmapHolder
-import kekmech.glasscardview.registry.SingleParentBitmapHolder
+import kekmech.glasscardview.buffer.GlobalFrameBuffer
+import kekmech.glasscardview.buffer.SingleViewFrameBuffer
 
 class GlassCardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0,
-    @StyleRes defStyleRes: Int = 0
+    @StyleRes defStyleRes: Int = 0,
+    private val frameBufferView: View? = null
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private lateinit var blurController: GlassBlurController
-    private lateinit var parentBitmapHolder: SingleParentBitmapHolder
+    private lateinit var viewFrameBuffer: SingleViewFrameBuffer
+    private lateinit var preDrawListener: ViewTreeObserver.OnPreDrawListener
     private val roundRectDrawable = RoundRectDrawable(null, 0f)
 
     var backgroundColor: ColorStateList?
@@ -73,23 +77,30 @@ class GlassCardView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         blurController.destroy()
-        GlobalBitmapHolder.deregisterView(this)
+        GlobalFrameBuffer.deregisterView(frameBufferView ?: parent as View)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        parentBitmapHolder = GlobalBitmapHolder.registerView(this)
+        viewFrameBuffer = GlobalFrameBuffer
+            .registerView(frameBufferView ?: parent as View)
         blurController = GlassBlurController(
             this,
-            parentBitmapHolder,
+            viewFrameBuffer,
             isInEditMode
         )
         blurController.isBlurEnabled = true
+        preDrawListener = ViewTreeObserver.OnPreDrawListener {
+            viewFrameBuffer.update()
+            true
+        }
+        viewTreeObserver.addOnPreDrawListener(preDrawListener)
     }
 
     override fun draw(canvas: Canvas) {
-        if (!parentBitmapHolder.shouldDraw()) return
+        if (!viewFrameBuffer.shouldDraw()) return
         val shouldDraw = blurController.draw(canvas)
         if (shouldDraw) {
             super.draw(canvas)

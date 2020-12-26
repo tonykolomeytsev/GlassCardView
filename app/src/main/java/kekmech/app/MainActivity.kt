@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<GlassCardView>(R.id.gcv).animate()
             .setStartDelay(500L)
             .translationY(-500f)
-            .setDuration(1500L)
+            .setDuration(3500L)
             .withEndAction { animate2() }
             .start()
 
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<GlassCardView>(R.id.gcv).animate()
             .setStartDelay(500L)
             .translationY(+500f)
-            .setDuration(1500L)
+            .setDuration(3500L)
             .withEndAction { animate1() }
             .start()
     }

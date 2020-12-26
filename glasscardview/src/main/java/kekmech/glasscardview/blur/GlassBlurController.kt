@@ -5,14 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
-import kekmech.glasscardview.registry.SingleParentBitmapHolder
+import kekmech.glasscardview.GlassCardView.Companion.DOWNSCALE_FACTOR
+import kekmech.glasscardview.buffer.SingleViewFrameBuffer
 import kotlin.math.ceil
 
 private const val ROUNDING_VALUE = 64
 
 internal class GlassBlurController(
     private val blurView: GlassCardView,
-    private val parentBitmapHolder: SingleParentBitmapHolder,
+    private val viewFrameBuffer: SingleViewFrameBuffer,
     isInEditMode: Boolean
 ) : BlurController {
 
@@ -20,12 +21,11 @@ internal class GlassBlurController(
     private var bufferBitmap: Bitmap? = null
     private var bufferCanvas: Canvas? = null
     private var bufferPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
-    private val bufferDownscaleFactor: Float = 8f
     private val containerViewLocation = IntArray(2) { 0 }
     private val blurViewLocation = IntArray(2) { 0 }
     private var tintPath: Path = Path()
 
-    private val blurRadius get() = (blurView.blurRadius / GlassCardView.DOWNSCALE_FACTOR).toInt()
+    private val blurRadius get() = (blurView.blurRadius / DOWNSCALE_FACTOR).toInt()
     private val preDrawListener = ViewTreeObserver.OnPreDrawListener {
         updateBlur()
         true
@@ -65,7 +65,7 @@ internal class GlassBlurController(
         with(bufferCanvas!!) {
             save()
             updateBufferCanvasMatrix()
-            parentBitmapHolder.draw(this)
+            viewFrameBuffer.draw(this)
             restore()
         }
 
@@ -89,8 +89,8 @@ internal class GlassBlurController(
         blurView.getLocationOnScreen(blurViewLocation)
         val left: Int = blurViewLocation[0] - containerViewLocation[0]
         val top: Int = blurViewLocation[1] - containerViewLocation[1]
-        val scaledLeftPosition: Float = -left / bufferDownscaleFactor
-        val scaledTopPosition: Float = -top / bufferDownscaleFactor
+        val scaledLeftPosition: Float = -left / viewFrameBuffer.downscaleFactorX
+        val scaledTopPosition: Float = -top / viewFrameBuffer.downscaleFactorY
 
         bufferCanvas?.translate(scaledLeftPosition, scaledTopPosition)
         //bufferCanvas?.scale(1f / bufferDownscaleFactor, 1f / bufferDownscaleFactor)
@@ -103,7 +103,7 @@ internal class GlassBlurController(
         updateBlur()
         canvas.save()
         canvas.clipPath(tintPath)
-        canvas.scale(bufferDownscaleFactor, bufferDownscaleFactor)
+        canvas.scale(viewFrameBuffer.downscaleFactorX, viewFrameBuffer.downscaleFactorY)
         bufferBitmap?.let { canvas.drawBitmap(it, 0f, 0f, bufferPaint) }
         bufferPaint.xfermode = null
         canvas.restore()
@@ -130,7 +130,7 @@ internal class GlassBlurController(
         measuredHeight.downscaleSize() == 0 || measuredWidth.downscaleSize() == 0
 
     private fun Int.downscaleSize(): Int =
-        ceil(this / GlassCardView.DOWNSCALE_FACTOR).toInt()
+        ceil(this / DOWNSCALE_FACTOR).toInt()
 
     private fun Int.roundTo(value: Int): Int =
         if (this % value == 0) this else this - this % value + value

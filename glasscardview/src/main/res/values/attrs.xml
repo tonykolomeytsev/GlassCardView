@@ -5,11 +5,6 @@
         <attr name="glassCornerRadius" format="dimension"/>
         <attr name="glassBlurRadius" format="dimension"/>
         <attr name="glassOpacity" format="float"/>
-        <attr name="contentPadding" format="dimension"/>
-        <attr name="contentPaddingLeft" format="dimension"/>
-        <attr name="contentPaddingTop" format="dimension"/>
-        <attr name="contentPaddingRight" format="dimension"/>
-        <attr name="contentPaddingBottom" format="dimension"/>
     </declare-styleable>
     <attr name="colorBackground" format="reference"/>
 </resources>

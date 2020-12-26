@@ -1,24 +1,21 @@
-package kekmech.glasscardview.registry
+package kekmech.glasscardview.buffer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.view.ViewGroup
+import android.view.View
 import android.view.ViewTreeObserver
-import kotlin.math.ceil
 
-internal class SingleParentBitmapHolder(
-    private val parentView: ViewGroup,
-    private val downscaleFactor: Float
+internal class SingleViewFrameBuffer(
+    private val frameBufferView: View
 ) {
     private var bufferBitmap: Bitmap? = null
     private var bufferCanvas: Canvas? = null
     private val parentRect: Rect = Rect()
-    private val Rect.downscaledWidth get() = ceil(width() / downscaleFactor).toInt()
-    private val Rect.downscaledHeight get() = ceil(height() / downscaleFactor).toInt()
+    private var bufferWidth: Int = -1
+    private var bufferHeight: Int = -1
     private val canReuseBitmapBuffer get() =
-        bufferBitmap?.width == parentRect.downscaledWidth &&
-                bufferBitmap?.height == parentRect.downscaledHeight
+        bufferBitmap?.width == bufferWidth && bufferBitmap?.height == bufferHeight
 
     private var isParentDrawingInProgress: Boolean = true
     private val preDrawListener = ViewTreeObserver.OnPreDrawListener {
@@ -27,23 +24,24 @@ internal class SingleParentBitmapHolder(
     }
 
     init {
-        parentView.viewTreeObserver.addOnPreDrawListener(preDrawListener)
+        frameBufferView.viewTreeObserver.addOnPreDrawListener(preDrawListener)
     }
 
-    private fun update() {
+    fun update() {
         isParentDrawingInProgress = true
-        parentView.getGlobalVisibleRect(parentRect)
+        frameBufferView.getGlobalVisibleRect(parentRect)
         if (!canReuseBitmapBuffer) {
+            bufferWidth = parentRect.width()
+            bufferHeight = parentRect.height()
             bufferBitmap?.recycle()
             bufferBitmap = Bitmap.createBitmap(
-                parentRect.downscaledWidth,
-                parentRect.downscaledHeight,
+                bufferWidth,
+                bufferHeight,
                 Bitmap.Config.ARGB_8888
             )
             bufferCanvas = Canvas(bufferBitmap!!)
         }
-        bufferCanvas!!.scale(1f / downscaleFactor, 1f / downscaleFactor)
-        parentView.draw(bufferCanvas)
+        frameBufferView.draw(bufferCanvas)
         isParentDrawingInProgress = false
     }
 
@@ -53,7 +51,7 @@ internal class SingleParentBitmapHolder(
     }
 
     fun destroy() {
-        parentView.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
+        frameBufferView.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         bufferCanvas = null
         bufferBitmap?.recycle()
         bufferBitmap = null
