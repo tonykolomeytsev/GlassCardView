@@ -5,12 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
+import kekmech.glasscardview.sharing.GlobalParentBitmapHolder
+import kekmech.glasscardview.sharing.SingleParentBitmapHolder
 import kotlin.math.ceil
 
 private const val ROUNDING_VALUE = 64
 
 internal class GlassBlurController(
     private val blurView: GlassCardView,
+    private val parentBitmapHolder: SingleParentBitmapHolder,
     isInEditMode: Boolean
 ) : BlurController {
 
@@ -24,7 +27,6 @@ internal class GlassBlurController(
     private var tintPath: Path = Path()
 
     private val blurRadius get() = (blurView.blurRadius / GlassCardView.DOWNSCALE_FACTOR).toInt()
-    private val containerView: ViewGroup get() = blurView.parent as ViewGroup
     private val preDrawListener = ViewTreeObserver.OnPreDrawListener {
         updateBlur()
         true
@@ -64,7 +66,7 @@ internal class GlassBlurController(
         with(bufferCanvas!!) {
             save()
             updateBufferCanvasMatrix()
-            containerView.draw(this)
+            parentBitmapHolder.draw(this)
             restore()
         }
 
@@ -84,7 +86,7 @@ internal class GlassBlurController(
     }
 
     private fun updateBufferCanvasMatrix() {
-        containerView.getLocationOnScreen(containerViewLocation)
+        (blurView.parent as ViewGroup).getLocationOnScreen(containerViewLocation)
         blurView.getLocationOnScreen(blurViewLocation)
         val left: Int = blurViewLocation[0] - containerViewLocation[0]
         val top: Int = blurViewLocation[1] - containerViewLocation[1]
@@ -92,7 +94,7 @@ internal class GlassBlurController(
         val scaledTopPosition: Float = -top / bufferDownscaleFactor
 
         bufferCanvas?.translate(scaledLeftPosition, scaledTopPosition)
-        bufferCanvas?.scale(1f / bufferDownscaleFactor, 1f / bufferDownscaleFactor)
+        //bufferCanvas?.scale(1f / bufferDownscaleFactor, 1f / bufferDownscaleFactor)
     }
 
     override fun draw(canvas: Canvas): Boolean {

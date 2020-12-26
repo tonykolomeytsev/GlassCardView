@@ -8,6 +8,8 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.*
 import kekmech.glasscardview.blur.GlassBlurController
+import kekmech.glasscardview.sharing.GlobalParentBitmapHolder
+import kekmech.glasscardview.sharing.SingleParentBitmapHolder
 
 class GlassCardView @JvmOverloads constructor(
     context: Context,
@@ -16,7 +18,7 @@ class GlassCardView @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val blurController = GlassBlurController(this, isInEditMode)
+    private lateinit var blurController: GlassBlurController
     private val roundRectDrawable = RoundRectDrawable(null, 0f)
 
     var backgroundColor: ColorStateList?
@@ -71,10 +73,16 @@ class GlassCardView @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         blurController.isBlurEnabled = false
+        GlobalParentBitmapHolder.removeView(this)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        blurController = GlassBlurController(
+            this,
+            GlobalParentBitmapHolder.registerView(this),
+            isInEditMode
+        )
         blurController.isBlurEnabled = true
     }
 
