@@ -18,7 +18,7 @@ class GlassCardView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0,
-    private val frameBufferView: View? = null
+    private val framesSourceView: View? = null
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private lateinit var blurController: GlassBlurController
@@ -79,17 +79,18 @@ class GlassCardView @JvmOverloads constructor(
         super.onDetachedFromWindow()
         viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         blurController.destroy()
-        GlobalFrameBuffer.deregisterView(frameBufferView ?: parent as View)
+        GlobalFrameBuffer.deregisterView(framesSourceView ?: parent as View)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         viewFrameBuffer = GlobalFrameBuffer
-            .registerView(frameBufferView ?: parent as View)
+            .registerView(framesSourceView ?: parent as View)
         blurController = GlassBlurController(
-            this,
-            viewFrameBuffer,
-            isInEditMode
+            blurView = this,
+            framesSourceView = framesSourceView ?: parent as View,
+            frameBuffer = viewFrameBuffer,
+            isInEditMode = isInEditMode
         )
         blurController.isBlurEnabled = true
         preDrawListener = ViewTreeObserver.OnPreDrawListener {

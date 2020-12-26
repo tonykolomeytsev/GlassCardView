@@ -2,7 +2,6 @@ package kekmech.glasscardview.blur
 
 import android.graphics.*
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
 import kekmech.glasscardview.GlassCardView.Companion.DOWNSCALE_FACTOR
@@ -13,7 +12,8 @@ private const val ROUNDING_VALUE = 64
 
 internal class GlassBlurController(
     private val blurView: GlassCardView,
-    private val viewFrameBuffer: SingleViewFrameBuffer,
+    private val framesSourceView: View,
+    private val frameBuffer: SingleViewFrameBuffer,
     isInEditMode: Boolean
 ) : BlurController {
 
@@ -21,6 +21,7 @@ internal class GlassBlurController(
     private var bufferBitmap: Bitmap? = null
     private var bufferCanvas: Canvas? = null
     private var bufferPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
+    private var bufferDownscaleFactor = DOWNSCALE_FACTOR
     private val containerViewLocation = IntArray(2) { 0 }
     private val blurViewLocation = IntArray(2) { 0 }
     private var tintPath: Path = Path()
@@ -65,7 +66,7 @@ internal class GlassBlurController(
         with(bufferCanvas!!) {
             save()
             updateBufferCanvasMatrix()
-            viewFrameBuffer.draw(this)
+            frameBuffer.draw(this)
             restore()
         }
 
@@ -75,7 +76,7 @@ internal class GlassBlurController(
 
     private fun allocateBitmap() {
         val (downscaledWidth, downscaledHeight, downscaleFactor) = blurView.measureDownscaledValues()
-        //bufferDownscaleFactor = downscaleFactor
+        bufferDownscaleFactor = downscaleFactor
         bufferBitmap = Bitmap.createBitmap(
             downscaledWidth,
             downscaledHeight,
@@ -85,15 +86,15 @@ internal class GlassBlurController(
     }
 
     private fun updateBufferCanvasMatrix() {
-        (blurView.parent as ViewGroup).getLocationOnScreen(containerViewLocation)
+        framesSourceView.getLocationOnScreen(containerViewLocation)
         blurView.getLocationOnScreen(blurViewLocation)
         val left: Int = blurViewLocation[0] - containerViewLocation[0]
         val top: Int = blurViewLocation[1] - containerViewLocation[1]
-        val scaledLeftPosition: Float = -left / viewFrameBuffer.downscaleFactorX
-        val scaledTopPosition: Float = -top / viewFrameBuffer.downscaleFactorY
+        val scaledLeftPosition: Float = -left / bufferDownscaleFactor
+        val scaledTopPosition: Float = -top / bufferDownscaleFactor
 
         bufferCanvas?.translate(scaledLeftPosition, scaledTopPosition)
-        //bufferCanvas?.scale(1f / bufferDownscaleFactor, 1f / bufferDownscaleFactor)
+        bufferCanvas?.scale(1f / bufferDownscaleFactor, 1f / bufferDownscaleFactor)
     }
 
     override fun draw(canvas: Canvas): Boolean {
@@ -103,7 +104,7 @@ internal class GlassBlurController(
         updateBlur()
         canvas.save()
         canvas.clipPath(tintPath)
-        canvas.scale(viewFrameBuffer.downscaleFactorX, viewFrameBuffer.downscaleFactorY)
+        canvas.scale(bufferDownscaleFactor, bufferDownscaleFactor)
         bufferBitmap?.let { canvas.drawBitmap(it, 0f, 0f, bufferPaint) }
         bufferPaint.xfermode = null
         canvas.restore()
