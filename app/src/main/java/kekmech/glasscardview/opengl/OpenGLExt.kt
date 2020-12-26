@@ -11,6 +11,10 @@ inline fun glDrawStripes(first: Int, count: Int) =
     glDrawArrays(GL_TRIANGLE_STRIP, first, count)
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun glDrawFan(first: Int, count: Int) =
+inline fun glDrawFans(first: Int, count: Int) =
     glDrawArrays(GL_TRIANGLE_FAN, first, count)
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun glDrawLines(first: Int, count: Int) =
+    glDrawArrays(GL_LINES, first, count)
 

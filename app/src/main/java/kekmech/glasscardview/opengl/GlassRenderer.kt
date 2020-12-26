@@ -11,10 +11,16 @@ class GlassRenderer(
 ) : GLSurfaceView.Renderer {
 
     private lateinit var assets: Assets
+    private var uColorLocation: Int = 0
 
     override fun onDrawFrame(gl: GL10?) {
         glClear(GL_COLOR_BUFFER_BIT)
-        glDrawFan(0, 4)
+
+        glUniform4f(uColorLocation, 1f, 0f, 0f, 1f)
+        glDrawArrays(GL_TRIANGLES, 0, 3)
+
+        glUniform4f(uColorLocation, 0f, 1f, 0f, 1f)
+        glDrawArrays(GL_TRIANGLES, 1, 3)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -29,7 +35,7 @@ class GlassRenderer(
     }
 
     private fun bindData() {
-        val uColorLocation = glGetUniformLocation(assets.program.id, "u_Color")
+        uColorLocation = glGetUniformLocation(assets.program.id, "u_Color")
         glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f)
 
         val aPositionLocation = glGetAttribLocation(assets.program.id, "a_Position")
