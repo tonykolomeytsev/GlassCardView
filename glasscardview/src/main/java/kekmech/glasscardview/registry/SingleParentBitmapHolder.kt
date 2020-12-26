@@ -1,12 +1,10 @@
-package kekmech.glasscardview.sharing
+package kekmech.glasscardview.registry
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnPreDrawListener
-import kekmech.glasscardview.GlassCardView
-import kotlin.collections.HashMap
+import android.view.ViewTreeObserver
 import kotlin.math.ceil
 
 internal class SingleParentBitmapHolder(
@@ -22,19 +20,18 @@ internal class SingleParentBitmapHolder(
         bufferBitmap?.width == parentRect.downscaledWidth &&
                 bufferBitmap?.height == parentRect.downscaledHeight
 
-    private val preDrawListener = OnPreDrawListener {
-        shouldDraw = false
+    private var isParentDrawingInProgress: Boolean = true
+    private val preDrawListener = ViewTreeObserver.OnPreDrawListener {
         update()
-        shouldDraw = true
         true
     }
-    var shouldDraw: Boolean = true
 
     init {
         parentView.viewTreeObserver.addOnPreDrawListener(preDrawListener)
     }
 
     private fun update() {
+        isParentDrawingInProgress = true
         parentView.getGlobalVisibleRect(parentRect)
         if (!canReuseBitmapBuffer) {
             bufferBitmap?.recycle()
@@ -47,6 +44,7 @@ internal class SingleParentBitmapHolder(
         }
         bufferCanvas!!.scale(1f / downscaleFactor, 1f / downscaleFactor)
         parentView.draw(bufferCanvas)
+        isParentDrawingInProgress = false
     }
 
     fun draw(canvas: Canvas) {
@@ -60,34 +58,6 @@ internal class SingleParentBitmapHolder(
         bufferBitmap?.recycle()
         bufferBitmap = null
     }
-}
 
-internal object GlobalParentBitmapHolder {
-
-    private val registry: HashMap<ViewGroup, SingleParentBitmapHolder> = HashMap()
-    private val counter: HashMap<ViewGroup, Int> = HashMap()
-
-    fun registerView(glassCardView: GlassCardView): SingleParentBitmapHolder {
-        val parent = glassCardView.parent as ViewGroup
-        if (!counter.containsKey(parent)) {
-            counter[parent] = 0
-        }
-        counter[parent] = counter[parent]!! + 1
-        return registry.getOrPut(parent) {
-            SingleParentBitmapHolder(
-                parentView = parent,
-                downscaleFactor = 8f
-            )
-        }
-    }
-
-    fun removeView(glassCardView: GlassCardView) {
-        val parent = glassCardView.parent as ViewGroup
-        counter[parent] = counter[parent]!! - 1
-        if (counter[parent] == 0) {
-            registry[parent]!!.destroy()
-            registry.remove(parent)
-            counter.remove(parent)
-        }
-    }
+    fun shouldDraw() = !isParentDrawingInProgress
 }

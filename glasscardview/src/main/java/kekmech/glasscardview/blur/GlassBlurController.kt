@@ -5,8 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
-import kekmech.glasscardview.sharing.GlobalParentBitmapHolder
-import kekmech.glasscardview.sharing.SingleParentBitmapHolder
+import kekmech.glasscardview.registry.SingleParentBitmapHolder
 import kotlin.math.ceil
 
 private const val ROUNDING_VALUE = 64

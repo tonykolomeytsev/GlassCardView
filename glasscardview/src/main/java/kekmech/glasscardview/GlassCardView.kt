@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.*
 import kekmech.glasscardview.blur.GlassBlurController
-import kekmech.glasscardview.sharing.GlobalParentBitmapHolder
-import kekmech.glasscardview.sharing.SingleParentBitmapHolder
+import kekmech.glasscardview.registry.GlobalBitmapHolder
+import kekmech.glasscardview.registry.SingleParentBitmapHolder
 
 class GlassCardView @JvmOverloads constructor(
     context: Context,
@@ -74,12 +74,12 @@ class GlassCardView @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         blurController.destroy()
-        GlobalParentBitmapHolder.removeView(this)
+        GlobalBitmapHolder.deregisterView(this)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        parentBitmapHolder = GlobalParentBitmapHolder.registerView(this)
+        parentBitmapHolder = GlobalBitmapHolder.registerView(this)
         blurController = GlassBlurController(
             this,
             parentBitmapHolder,
@@ -89,7 +89,7 @@ class GlassCardView @JvmOverloads constructor(
     }
 
     override fun draw(canvas: Canvas) {
-        if (!parentBitmapHolder.shouldDraw) return
+        if (!parentBitmapHolder.shouldDraw()) return
         val shouldDraw = blurController.draw(canvas)
         if (shouldDraw) {
             super.draw(canvas)
