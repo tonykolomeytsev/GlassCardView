@@ -19,6 +19,7 @@ class GlassCardView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private lateinit var blurController: GlassBlurController
+    private lateinit var parentBitmapHolder: SingleParentBitmapHolder
     private val roundRectDrawable = RoundRectDrawable(null, 0f)
 
     var backgroundColor: ColorStateList?
@@ -72,21 +73,23 @@ class GlassCardView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        blurController.isBlurEnabled = false
+        blurController.destroy()
         GlobalParentBitmapHolder.removeView(this)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        parentBitmapHolder = GlobalParentBitmapHolder.registerView(this)
         blurController = GlassBlurController(
             this,
-            GlobalParentBitmapHolder.registerView(this),
+            parentBitmapHolder,
             isInEditMode
         )
         blurController.isBlurEnabled = true
     }
 
     override fun draw(canvas: Canvas) {
+        if (!parentBitmapHolder.shouldDraw) return
         val shouldDraw = blurController.draw(canvas)
         if (shouldDraw) {
             super.draw(canvas)

@@ -21,7 +21,7 @@ internal class GlassBlurController(
     private var bufferBitmap: Bitmap? = null
     private var bufferCanvas: Canvas? = null
     private var bufferPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
-    private var bufferDownscaleFactor: Float = 1f
+    private val bufferDownscaleFactor: Float = 8f
     private val containerViewLocation = IntArray(2) { 0 }
     private val blurViewLocation = IntArray(2) { 0 }
     private var tintPath: Path = Path()
@@ -76,7 +76,7 @@ internal class GlassBlurController(
 
     private fun allocateBitmap() {
         val (downscaledWidth, downscaledHeight, downscaleFactor) = blurView.measureDownscaledValues()
-        bufferDownscaleFactor = downscaleFactor
+        //bufferDownscaleFactor = downscaleFactor
         bufferBitmap = Bitmap.createBitmap(
             downscaledWidth,
             downscaledHeight,

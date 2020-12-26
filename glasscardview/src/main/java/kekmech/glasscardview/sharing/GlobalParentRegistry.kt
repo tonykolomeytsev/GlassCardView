@@ -23,9 +23,12 @@ internal class SingleParentBitmapHolder(
                 bufferBitmap?.height == parentRect.downscaledHeight
 
     private val preDrawListener = OnPreDrawListener {
+        shouldDraw = false
         update()
+        shouldDraw = true
         true
     }
+    var shouldDraw: Boolean = true
 
     init {
         parentView.viewTreeObserver.addOnPreDrawListener(preDrawListener)
@@ -82,6 +85,7 @@ internal object GlobalParentBitmapHolder {
         val parent = glassCardView.parent as ViewGroup
         counter[parent] = counter[parent]!! - 1
         if (counter[parent] == 0) {
+            registry[parent]!!.destroy()
             registry.remove(parent)
             counter.remove(parent)
         }
