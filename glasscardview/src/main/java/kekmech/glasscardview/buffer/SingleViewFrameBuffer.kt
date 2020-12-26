@@ -3,6 +3,7 @@ package kekmech.glasscardview.buffer
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 
@@ -33,6 +34,7 @@ internal class SingleViewFrameBuffer(
         if (!canReuseBitmapBuffer) {
             bufferWidth = parentRect.width()
             bufferHeight = parentRect.height()
+            Log.d(TAG, "update: allocating new bitmap (${bufferWidth}x$bufferHeight)")
             bufferBitmap?.recycle()
             bufferBitmap = Bitmap.createBitmap(
                 bufferWidth,
@@ -40,6 +42,8 @@ internal class SingleViewFrameBuffer(
                 Bitmap.Config.ARGB_8888
             )
             bufferCanvas = Canvas(bufferBitmap!!)
+        } else {
+            Log.d(TAG, "update: reuse allocated bitmap (${bufferWidth}x$bufferHeight)")
         }
         frameBufferView.draw(bufferCanvas)
         isParentDrawingInProgress = false
@@ -55,7 +59,12 @@ internal class SingleViewFrameBuffer(
         bufferCanvas = null
         bufferBitmap?.recycle()
         bufferBitmap = null
+        Log.d(TAG, "destroy: collecting bitmap (${bufferWidth}x$bufferHeight)")
     }
 
     fun shouldDraw() = !isParentDrawingInProgress
+
+    companion object {
+        private const val TAG = "SingleViewFrameBuffer"
+    }
 }
