@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
@@ -48,14 +49,16 @@ class GlassCardView @JvmOverloads constructor(
             cornerRadius = getDimension(
                 R.styleable.GlassCardView_glassCornerRadius,
                 resources.dpToPx(DEFAULT_CORNER_RADIUS)
-            )
+            ).coerceAtLeast(0f)
             blurRadius = getDimension(
                 R.styleable.GlassCardView_glassBlurRadius,
                 resources.dpToPx(DEFAULT_BLUR_RADIUS)
-            ).toInt()
+            ).toInt().coerceIn(1, 25)
             opacity = getFloat(R.styleable.GlassCardView_glassOpacity, DEFAULT_OPACITY)
+                .coerceIn(0f, 1f)
         }
         background = roundRectDrawable
+        Log.d(TAG, "Allocating GlassCardView")
     }
 
     private fun TypedArray.getBackgroundColor(context: Context): ColorStateList? {
@@ -109,6 +112,7 @@ class GlassCardView @JvmOverloads constructor(
     }
 
     companion object {
+        private const val TAG = "GlassCardView"
         internal const val DOWNSCALE_FACTOR = 8f
 
         const val DEFAULT_BLUR_RADIUS = 32f
