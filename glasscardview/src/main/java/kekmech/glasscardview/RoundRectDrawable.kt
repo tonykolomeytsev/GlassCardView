@@ -4,7 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.Drawable
 
-class RoundRectDrawable(
+internal class RoundRectDrawable(
     _backgroundColor: ColorStateList?,
     _cornerRadius: Float
 ) : Drawable() {

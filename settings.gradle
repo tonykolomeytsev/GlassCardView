@@ -1,2 +1,3 @@
+include ':glasscardview'
 include ':app'
 rootProject.name = "GlassCardView"

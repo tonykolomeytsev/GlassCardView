@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
