@@ -7,8 +7,10 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import kekmech.glasscardview.GlassCardView
 import kekmech.glasscardview.R
+import kekmech.glasscardview.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +40,10 @@ class MainActivity : AppCompatActivity() {
             }
             glass.invalidate()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     private fun SeekBar.setOnSeekBarChangeListener(listener: (Int) -> Unit) {

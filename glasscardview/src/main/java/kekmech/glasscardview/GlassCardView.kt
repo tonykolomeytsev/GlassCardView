@@ -40,7 +40,10 @@ class GlassCardView @JvmOverloads constructor(
         get() = roundRectDrawable.alpha
         set(value) { roundRectDrawable.alpha = value.coerceIn(0f, 1f) }
     var blurRadius: Int = 0
-        set(value) { field = value.coerceIn(BLUR_RADIUS_MIN, BLUR_RADIUS_MAX) }
+        set(value) {
+            field = value.coerceIn(BLUR_RADIUS_MIN, BLUR_RADIUS_MAX)
+            invalidate()
+        }
     var framesSourceView: View? = _framesSourceView
         set(value) {
             if (isAttachedToWindow) {

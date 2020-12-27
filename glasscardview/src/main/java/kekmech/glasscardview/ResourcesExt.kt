@@ -26,7 +26,8 @@ internal fun Context.useAttributes(
     @StyleableRes styleable: IntArray,
     @AttrRes defStyleAttr: Int,
     @StyleRes defStyleRes: Int,
-    user: TypedArray.() -> Unit) {
+    user: TypedArray.() -> Unit)
+{
     val array = obtainStyledAttributes(attrs, styleable, defStyleAttr, defStyleRes)
     user.invoke(array)
     array.recycle()
