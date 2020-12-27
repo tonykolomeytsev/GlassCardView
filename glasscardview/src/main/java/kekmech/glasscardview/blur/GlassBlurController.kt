@@ -50,7 +50,7 @@ internal class GlassBlurController(
         updateBufferCanvasMatrix()
     }
 
-    private fun updateTintPath() {
+    fun updateTintPath() {
         tintPath = Path()
         tintPath.addRoundRect(
             RectF(0f, 0f, blurView.measuredWidth.toFloat(), blurView.measuredHeight.toFloat()),
@@ -63,7 +63,7 @@ internal class GlassBlurController(
     private fun updateBlur() {
         if (!isBlurEnabled) return
         bufferBitmap?.eraseColor(Color.TRANSPARENT)
-        with(bufferCanvas!!) {
+        bufferCanvas!!.apply {
             save()
             updateBufferCanvasMatrix()
             frameBuffer.draw(this)
