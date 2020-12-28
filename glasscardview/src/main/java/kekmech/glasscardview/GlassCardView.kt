@@ -108,6 +108,10 @@ class GlassCardView @JvmOverloads constructor(
     override fun draw(canvas: Canvas) {
         if (!viewFrameBuffer.shouldDraw()) return
         val shouldDraw = blurController.draw(canvas)
+        val path = Path()
+        path.addRoundRect(0f, 0f, width.toFloat(), height.toFloat(),
+            (cornerRadius-0.00f).coerceAtLeast(0f), (cornerRadius-0.00f).coerceAtLeast(0f), Path.Direction.CW)
+        canvas.clipPath(path)
         if (shouldDraw) {
             super.draw(canvas)
         }
