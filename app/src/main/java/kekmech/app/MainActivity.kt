@@ -41,10 +41,25 @@ class MainActivity : AppCompatActivity() {
             }
             glass.invalidate()
         }
+        translateLeft(glass)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun translateLeft(view: View) {
+        view.animate()
+            .setDuration(5000L)
+            .translationX(-50f)
+            .setStartDelay(200L)
+            .withEndAction { translateRight(view) }
+            .start()
+    }
+
+    private fun translateRight(view: View) {
+        view.animate()
+            .setDuration(5000L)
+            .translationX(50f)
+            .setStartDelay(200L)
+            .withEndAction { translateLeft(view) }
+            .start()
     }
 
     private fun SeekBar.setOnSeekBarChangeListener(listener: (Int) -> Unit) {

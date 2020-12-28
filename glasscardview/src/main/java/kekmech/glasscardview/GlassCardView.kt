@@ -128,7 +128,7 @@ class GlassCardView @JvmOverloads constructor(
         )
         blurController.isBlurEnabled = true
         preDrawListener = ViewTreeObserver.OnPreDrawListener {
-            viewFrameBuffer.update()
+            //viewFrameBuffer.update()
             true
         }
         viewTreeObserver.addOnPreDrawListener(preDrawListener)

@@ -1,6 +1,7 @@
 package kekmech.glasscardview.blur
 
 import android.graphics.*
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import kekmech.glasscardview.GlassCardView
@@ -17,11 +18,7 @@ internal class GlassBlurController(
     isInEditMode: Boolean
 ) : BlurController {
 
-    private val blurAlgorithm: BlurAlgorithm? = if (isInEditMode) {
-        EditModeBlurAlgorithm()
-    } else {
-        GlassBlurAlgorithm(blurView.context)
-    }
+    private val blurAlgorithm: BlurAlgorithm = instantiateBlurAlgorithm(isInEditMode)
     private var bufferBitmap: Bitmap? = null
     private var bufferCanvas: Canvas? = null
     private var bufferPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
@@ -74,7 +71,7 @@ internal class GlassBlurController(
             restore()
         }
 
-        bufferBitmap = bufferBitmap?.let { blurAlgorithm?.blur(it, blurRadius) }
+        bufferBitmap = bufferBitmap?.let { blurAlgorithm.blur(it, blurRadius) }
         bufferCanvas?.setBitmap(bufferBitmap)
     }
 
@@ -120,7 +117,20 @@ internal class GlassBlurController(
 
     override fun destroy() {
         isBlurEnabled = false
-        blurAlgorithm?.destroy()
+        blurAlgorithm.destroy()
+    }
+
+    private fun instantiateBlurAlgorithm(isInEditMode: Boolean): BlurAlgorithm {
+        return if (isInEditMode) {
+            EditModeBlurAlgorithm()
+        } else {
+            try {
+                GlassBlurAlgorithm(blurView.context)
+            } catch (e: Exception) {
+                Log.e("GlassBlurController", "RenderScript blur algorithm init error! Switch to edit mode blur algorithm! \n ${e.stackTraceToString()}")
+                EditModeBlurAlgorithm()
+            }
+        }
     }
 
     private fun View.measureDownscaledValues(): Triple<Int, Int, Float> {
