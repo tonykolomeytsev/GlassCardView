@@ -19,15 +19,16 @@
             android:layout_gravity="center"
             app:glassCornerRadius="4dp"
             android:elevation="4dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/menu"
+            android:layout_marginBottom="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/glass2"
             app:glassBlurRadius="8dp"
             android:foreground="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:alpha="1">
+            android:alpha="1"
+            android:layout_marginTop="32dp">
 
         <ImageView
                 android:layout_width="100dp"
@@ -54,6 +55,47 @@
 
     </kekmech.glasscardview.GlassCardView>
 
+    <kekmech.glasscardview.GlassCardView
+            android:id="@+id/glass2"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            app:glassCornerRadius="4dp"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toTopOf="@id/menu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="32dp"
+            app:glassBlurRadius="8dp"
+            android:foreground="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:alpha="1">
+
+        <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/demo_icon2"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Californian Soil"
+                android:layout_marginStart="116dp"
+                android:layout_marginTop="16dp"
+                android:textColor="#000"
+                android:textSize="22sp"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="London Grammar"
+                android:layout_marginStart="116dp"
+                android:layout_marginTop="48dp"
+                android:textColor="#88000000"
+                android:textSize="16sp"/>
+
+    </kekmech.glasscardview.GlassCardView>
 
     <kekmech.glasscardview.GlassCardView
             android:id="@+id/menu"
