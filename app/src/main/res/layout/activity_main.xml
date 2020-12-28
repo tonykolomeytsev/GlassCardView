@@ -23,8 +23,7 @@
             app:layout_constraintBottom_toTopOf="@id/menu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:glassBlurRadius="16dp"
-            app:glassOpacity="0.0"
+            app:glassBlurRadius="8dp"
             android:foreground="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
@@ -63,7 +62,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:glassCornerRadius="0dp"
             app:glassBlurRadius="32dp"
-            app:glassOpacity="0.0"
             android:paddingVertical="16dp">
 
         <LinearLayout

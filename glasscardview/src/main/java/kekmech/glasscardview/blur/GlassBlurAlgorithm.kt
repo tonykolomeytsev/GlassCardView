@@ -7,7 +7,6 @@ import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 
-
 internal class GlassBlurAlgorithm(context: Context) : BlurAlgorithm {
 
     private val renderScript = RenderScript.create(context)
