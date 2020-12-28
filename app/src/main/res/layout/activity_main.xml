@@ -12,26 +12,48 @@
             android:scaleType="centerCrop"
             android:src="@drawable/wallpaper"/>
 
-    <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+    <kekmech.glasscardview.GlassCardView
+            android:id="@+id/glass"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            app:glassCornerRadius="4dp"
+            android:elevation="4dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/menu">
+            app:layout_constraintBottom_toTopOf="@id/menu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:glassBlurRadius="16dp"
+            app:glassOpacity="0.0"
+            android:foreground="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:alpha="1">
 
-        <kekmech.glasscardview.GlassCardView
-                android:id="@+id/glass"
-                android:layout_width="300dp"
+        <ImageView
+                android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_gravity="center"
-                app:glassCornerRadius="4dp"
-                android:elevation="4dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/menu"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:src="@drawable/demo_icon"/>
 
-    </FrameLayout>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Runaway (U&amp;I)"
+                android:layout_marginStart="116dp"
+                android:layout_marginTop="16dp"
+                android:textColor="#000"
+                android:textSize="22sp"/>
 
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Galantis"
+                android:layout_marginStart="116dp"
+                android:layout_marginTop="48dp"
+                android:textColor="#88000000"
+                android:textSize="16sp"/>
+
+    </kekmech.glasscardview.GlassCardView>
 
 
     <kekmech.glasscardview.GlassCardView
@@ -40,6 +62,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:glassCornerRadius="0dp"
+            app:glassBlurRadius="32dp"
+            app:glassOpacity="0.0"
             android:paddingVertical="16dp">
 
         <LinearLayout

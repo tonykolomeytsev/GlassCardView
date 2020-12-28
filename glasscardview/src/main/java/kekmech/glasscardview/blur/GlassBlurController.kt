@@ -17,7 +17,11 @@ internal class GlassBlurController(
     isInEditMode: Boolean
 ) : BlurController {
 
-    private val blurAlgorithm: GlassBlurAlgorithm? = if (isInEditMode) null else GlassBlurAlgorithm(blurView.context)
+    private val blurAlgorithm: BlurAlgorithm? = if (isInEditMode) {
+        EditModeBlurAlgorithm()
+    } else {
+        GlassBlurAlgorithm(blurView.context)
+    }
     private var bufferBitmap: Bitmap? = null
     private var bufferCanvas: Canvas? = null
     private var bufferPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)

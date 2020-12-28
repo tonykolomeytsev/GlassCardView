@@ -8,7 +8,7 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 
 
-internal class GlassBlurAlgorithm(context: Context) {
+internal class GlassBlurAlgorithm(context: Context) : BlurAlgorithm {
 
     private val renderScript = RenderScript.create(context)
     private val blurScript = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript))
@@ -20,7 +20,7 @@ internal class GlassBlurAlgorithm(context: Context) {
     private val Bitmap.canReuseAllocation: Boolean
         get() = height == lastBitmapHeight && width == lastBitmapWidth
 
-    fun blur(bitmap: Bitmap, blurRadius: Int): Bitmap {
+    override fun blur(bitmap: Bitmap, blurRadius: Int): Bitmap {
         //Allocation will use the same backing array of pixels as bitmap if created with USAGE_SHARED flag
         val allocation = Allocation.createFromBitmap(renderScript, bitmap)
 
@@ -41,7 +41,7 @@ internal class GlassBlurAlgorithm(context: Context) {
         return bitmap
     }
 
-    fun destroy() {
+    override fun destroy() {
         blurScript.destroy()
         renderScript.destroy()
         globalAllocation?.destroy()
